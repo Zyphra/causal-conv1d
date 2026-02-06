@@ -17,6 +17,7 @@
 #include "causal_conv1d.h"
 #include "causal_conv1d_common.h"
 #include "static_switch.h"
+#define NUM_THREADS 1024
 
 template<int kNThreads_, int kWidth_, bool kIsVecLoad_, typename input_t_, typename weight_t_>
 struct Causal_conv1d_fwd_kernel_traits {
@@ -164,11 +165,11 @@ void causal_conv1d_fwd_launch(ConvParamsBase &params, cudaStream_t stream) {
 template<typename input_t, typename weight_t>
 void causal_conv1d_fwd_cuda(ConvParamsBase &params, cudaStream_t stream) {
     if (params.width == 2) {
-        causal_conv1d_fwd_launch<128, 2, input_t, weight_t>(params, stream);
+        causal_conv1d_fwd_launch<NUM_THREADS, 2, input_t, weight_t>(params, stream);
     } else if (params.width == 3) {
-        causal_conv1d_fwd_launch<128, 3, input_t, weight_t>(params, stream);
+        causal_conv1d_fwd_launch<NUM_THREADS, 3, input_t, weight_t>(params, stream);
     } else if (params.width == 4) {
-        causal_conv1d_fwd_launch<128, 4, input_t, weight_t>(params, stream);
+        causal_conv1d_fwd_launch<NUM_THREADS, 4, input_t, weight_t>(params, stream);
     }
 }
 
